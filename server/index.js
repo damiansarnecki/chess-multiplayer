@@ -7,7 +7,7 @@ const io = require('socket.io')(http, {
     }
 });
 
-const ChessGame = require('./chessGame.js')
+const ChessGame = require('./ChessGame.js')
 
 let game = new ChessGame();
 
@@ -19,7 +19,12 @@ io.on("connection", socket => {
     socket.on("move", (move) => {
         let success = game.makeMove(move)
         if(success)
-            io.sockets.emit("chessboardState", {chessboard: game.getChessboard()})
+            io.sockets.emit("chessboardMove", move)
+    })
+
+    socket.on("getMovesForSquare", square => {
+        let moves = game.availableMoves.filter(move => move.from == square)
+        socket.emit("movesForSquare", moves)
     })
 })
 

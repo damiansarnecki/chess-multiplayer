@@ -1,32 +1,38 @@
 <template>
-    <div class='tile' v-bind:class="
-        [
-
+    <div class='tile' v-bind:class="[
         isBlack ? 'black' : 'white',
         isActive ? 'active' : ''
-        ]">
+    ]">
 
-        <Piece :name="data.content" v-if="data.content != ''"></Piece>
+        <div class="marker" v-if="showMoveMarker"></div>
+        <div class="attack-marker" v-if="showAttackMarker"></div>
     </div>
 </template>
 
 <script>
-import Piece from './Piece.vue'
+
 
 export default {
   name: 'Tile',
-  props: ['data', 'activeTile'],
+  props: ['data', 'activeTile', 'availableMove'],
   components: {
-      Piece
+      
   },
   data() {
       return {
-         isBlack: false
+         isBlack: false,
+         
       }
   },
   computed: {
       isActive() {
           return this.activeTile == this.data.index
+      },
+      showMoveMarker() {
+          return this.availableMove && this.data.content == '';
+      },
+        showAttackMarker() {
+          return this.availableMove && this.data.content != '';
       }
   },
   mounted() {
@@ -41,6 +47,7 @@ export default {
         display: grid;
         justify-content: center;
         align-items: center;
+        position: relative;
     }
 
     .tile img {
@@ -59,4 +66,26 @@ export default {
     .active {
         background-color: 	#baca44;
     }
+
+    .marker {
+        width: 25%;
+        height: 25%;
+        border-radius: 50%;
+        margin-left: 37.5%;
+        position: absolute;
+        background-color: rgb(0,0,0, 0.1)
+    }
+    
+
+    .attack-marker
+    {
+        width: 70%;
+        height: 70%;
+        border-radius: 50%;
+        border: 10px solid rgb(0,0,0, 0.2);
+        margin-left: calc(15% - 10px);
+        position: absolute;
+    }
+
+
 </style>

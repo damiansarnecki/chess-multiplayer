@@ -9,8 +9,19 @@ module.exports = class MoveFinder {
     }
 
     static getPieceType(piece) {
-        if(piece[1] == 'P')
+        let p = piece[1]
+        if(p == 'P')
             return 'P'
+        if(p == 'N')
+            return 'N'
+        if(p == 'B')
+            return 'B'
+        if(p == 'R')
+            return 'R'
+        if(p == 'Q')
+            return 'Q'
+        if(p == 'K')
+            return 'K'
     }
 
     static colorToNumber(color) {
@@ -19,6 +30,11 @@ module.exports = class MoveFinder {
         else 
             return -1;
     }
+
+    static tileIsInBoard(tile) {
+        return tile < 99 && tile > 20 && tile % 10 != 0 && tile % 10 != 9
+    }
+    
 
     static getAllAvailableMoves(chessboard) {
         let availableMoves = []
@@ -41,6 +57,7 @@ module.exports = class MoveFinder {
     static getAvailableMovesForPiece(piece, currentTile, chessboard) {
         let availableMoves = []
         const pieceColor = this.getPieceColor(piece)
+        currentTile = Number(currentTile)
 
         if(this.getPieceType(piece) == 'P') {
 
@@ -64,10 +81,136 @@ module.exports = class MoveFinder {
                 availableMoves.push({from: currentTile, to: currentTile - this.colorToNumber(pieceColor)*10 + 1})
             if(chessboard[squareToDiagLeft][0] != piece[0] && chessboard[squareToDiagLeft] != '')
                 availableMoves.push({from: currentTile, to: currentTile - this.colorToNumber(pieceColor)*10 - 1})
+
+        } else if(this.getPieceType(piece) == 'N') {
+            if(this.tileIsInBoard(currentTile - 20 - 1) && this.getPieceColor(chessboard[currentTile - 20 - 1]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile - 20 - 1})
+            if(this.tileIsInBoard(currentTile - 20 + 1) && this.getPieceColor(chessboard[currentTile - 20 + 1]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile - 20 + 1})
+            if(this.tileIsInBoard(currentTile + 20 - 1) && this.getPieceColor(chessboard[currentTile + 20 - 1]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile + 20 - 1})
+            if(this.tileIsInBoard(currentTile + 20 + 1) && this.getPieceColor(chessboard[currentTile + 20 + 1]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile + 20 + 1})
+            if(this.tileIsInBoard(currentTile - 10 - 2) && this.getPieceColor(chessboard[currentTile - 10 - 2]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile - 10 - 2})
+            if(this.tileIsInBoard(currentTile - 10 + 2) && this.getPieceColor(chessboard[currentTile - 10 + 2]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile - 10 + 2})
+            if(this.tileIsInBoard(currentTile + 10 - 2) && this.getPieceColor(chessboard[currentTile + 10 - 2]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile + 10 - 2})
+            if(this.tileIsInBoard(currentTile + 10 + 2) && this.getPieceColor(chessboard[currentTile + 10 + 2]) != this.getPieceColor(piece))
+                availableMoves.push({from: currentTile, to: currentTile + 10 + 2})
+
+        } else if(this.getPieceType(piece) == 'B') {
+
+            let directions = [-11, -9, 11, 9]
+
+            for(let d of directions) {
+                for(let i = currentTile + d; i > 0 && i < 99; i += d) {
+                    let tileIsInBoard = this.tileIsInBoard(i)
+                    if(tileIsInBoard && this.isTileEmpty(i, chessboard))
+                    {
+                        availableMoves.push({from: currentTile, to: i})
+    
+                    } else if(tileIsInBoard && !this.isTileEmpty(i, chessboard)){
+                        if(this.getPieceColor(chessboard[i]) != pieceColor) {
+                            availableMoves.push({from: currentTile, to: i})
+                            break;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+        } else if(this.getPieceType(piece) == 'R') {
+            let directions = [-10, -1, 10, 1]
+            for(let d of directions) {
+                for(let i = currentTile + d; i > 0 && i < 99; i += d) {
+                    let tileIsInBoard = this.tileIsInBoard(i)
+                    if(tileIsInBoard && this.isTileEmpty(i, chessboard))
+                    {
+                        availableMoves.push({from: currentTile, to: i})
+    
+                    } else if(tileIsInBoard && !this.isTileEmpty(i, chessboard)){
+                        if(this.getPieceColor(chessboard[i]) != pieceColor) {
+                            availableMoves.push({from: currentTile, to: i})
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+            
+        } else if(this.getPieceType(piece) == 'Q') {
+            let directionsStraight = [-10, -1, 10, 1]
+            for(let d of directionsStraight) {
+                for(let i = currentTile + d; i > 0 && i < 99; i += d) {
+                    let tileIsInBoard = this.tileIsInBoard(i)
+                    if(tileIsInBoard && this.isTileEmpty(i, chessboard))
+                    {
+                        availableMoves.push({from: currentTile, to: i})
+    
+                    } else if(tileIsInBoard && !this.isTileEmpty(i, chessboard)){
+                        if(this.getPieceColor(chessboard[i]) != pieceColor) {
+                            availableMoves.push({from: currentTile, to: i})
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+
+            let directionsDiag = [-11, -9, 11, 9]
+            for(let d of directionsDiag) {
+                for(let i = currentTile + d; i > 0 && i < 99; i += d) {
+                    let tileIsInBoard = this.tileIsInBoard(i)
+                    if(tileIsInBoard && this.isTileEmpty(i, chessboard))
+                    {
+                        availableMoves.push({from: currentTile, to: i})
+    
+                    } else if(tileIsInBoard && !this.isTileEmpty(i, chessboard)){
+                        if(this.getPieceColor(chessboard[i]) != pieceColor) {
+                            availableMoves.push({from: currentTile, to: i})
+                            break;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
         } else if(this.getPieceType(piece) == 'K') {
+            for(let x = -1; x < 2; x++){
+                for(let y = -1; y < 2; y++){
+                    
+                    let destinationTile = currentTile + 10*x + y
+                    let tileIsInBoard = this.tileIsInBoard(destinationTile)
+
+                    if(!(y == 0 && x == 0)) {
+                        if(tileIsInBoard && this.isTileEmpty(destinationTile, chessboard))
+                        {
+                            availableMoves.push({from: currentTile, to: destinationTile})
+        
+                        } else if(tileIsInBoard && this.getPieceColor(chessboard[destinationTile]) != pieceColor) {
+                            availableMoves.push({from: currentTile, to: destinationTile})
+                        }
+                    }
+                }
+            }
 
         }
-        
 
         return availableMoves;
     }

@@ -52,8 +52,6 @@ module.exports = class ChessGame {
         if(MoveFinder.getPieceColor(piece) != this.currentTurn)
             return false;
 
-       
-
         if(this.availableMoves.filter(availableMove => availableMove.from == move.from && availableMove.to == move.to).length > 0) {
             this.chessboard[move.to] = this.chessboard[move.from];
             this.chessboard[move.from] = ""

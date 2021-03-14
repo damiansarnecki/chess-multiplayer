@@ -15,15 +15,15 @@ export default {
 </script>
 
 <style>
+
 body {
   padding: 0;
   margin: 0;
 }
+
 #app {
   height: 100vh;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  background-color: #222;
+
+
 }
 </style>

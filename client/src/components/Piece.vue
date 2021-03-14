@@ -1,11 +1,11 @@
 <template>
-    <img v-bind:src="`pieces/${pieceImages[name]}`"/>
+    <img class="piece" v-bind:style="{transform: `translate(${file*100 + 5}px, ${rank*100 + 5}px )`}" v-bind:src="`pieces/${pieceImages[name]}`"/>
 </template>
 
 <script>
 export default {
   name: 'Tile',
-  props: ['name'],
+  props: ['name', 'index'],
   data() {
       return {
           pieceImages: {
@@ -16,7 +16,7 @@ export default {
             'bN': 'black-knight.png',
             'wN': 'white-knight.png',
             'wB': 'white-bishop.png',
-            'bB': 'black-rook.png',
+            'bB': 'black-bishop.png',
             'wK': 'white-king.png',
             'bK': 'black-king.png',
             'wQ': 'white-queen.png',
@@ -25,14 +25,20 @@ export default {
       }
   },
   computed: {
-
-  },
-  mounted() {
-
+    file() {
+      return (this.index % 10 - 1)
+    }, 
+    rank() {
+      return Math.floor(this.index / 10 - 2)
+    }
   }
 }
 </script>
 
 <style scoped>
-
+  .piece {
+    width: 90px;
+    position: absolute;
+    transition: 0.1s;
+  }
 </style>
