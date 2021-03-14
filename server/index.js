@@ -18,8 +18,20 @@ io.on("connection", socket => {
 
     socket.on("move", (move) => {
         let success = game.makeMove(move)
-        if(success)
+        if(success){
             io.sockets.emit("chessboardMove", move)
+
+            //handle castling
+            if(move.from == 95 && move.to == 97) 
+                io.sockets.emit("chessboardMove", {from: 98, to: 96})
+            if(move.from == 95 && move.to == 93) 
+                io.sockets.emit("chessboardMove", {from: 91, to: 94})
+            if(move.from == 25 && move.to == 27) 
+                io.sockets.emit("chessboardMove", {from: 28, to: 26})
+            if(move.from == 25 && move.to == 23) 
+                io.sockets.emit("chessboardMove", {from: 21, to: 24})
+        }
+            
     })
 
     socket.on("getMovesForSquare", square => {

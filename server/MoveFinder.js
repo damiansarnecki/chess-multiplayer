@@ -36,7 +36,7 @@ module.exports = class MoveFinder {
     }
     
 
-    static getAllAvailableMoves(chessboard) {
+    static getAllAvailableMoves(chessboard, castlingInfo) {
         let availableMoves = []
         for(let t in chessboard) {
             let content = chessboard[t]
@@ -44,6 +44,17 @@ module.exports = class MoveFinder {
                 availableMoves = availableMoves.concat(this.getAvailableMovesForPiece(content, t, chessboard))
             }
         }
+
+
+        console.log(castlingInfo)
+        if(castlingInfo.whiteShortCastleAvailable && this.isTileEmpty(97, chessboard) && this.isTileEmpty(96, chessboard))
+            availableMoves.push({from: 95, to: 97})
+        if(castlingInfo.whiteLongCastleAvailable && this.isTileEmpty(94, chessboard) && this.isTileEmpty(93, chessboard) && this.isTileEmpty(92, chessboard))
+            availableMoves.push({from: 95, to: 93})
+        if(castlingInfo.blackShortCastleAvailable && this.isTileEmpty(27, chessboard) && this.isTileEmpty(26, chessboard))
+            availableMoves.push({from: 25, to: 27})
+        if(castlingInfo.blackLongCastleAvailable && this.isTileEmpty(97, chessboard) && this.isTileEmpty(23, chessboard) && this.isTileEmpty(22, chessboard))
+            availableMoves.push({from: 25, to: 23})
         
         return availableMoves
     }

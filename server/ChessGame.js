@@ -5,6 +5,13 @@ module.exports = class ChessGame {
         this.chessboard = new Array(120).fill('');
         this.currentTurn = 'white'
 
+        this.castlingInfo = {
+            whiteLongCastleAvailable: true,
+            whiteShortCastleAvailable: true,
+            blackLongCastleAvailable: true,
+            blackShortCastleAvailable: true,
+        }
+
         this.setupChessBoard();
         this.availableMoves = this.findAvailableMoves()
     }
@@ -40,26 +47,65 @@ module.exports = class ChessGame {
 
     findAvailableMoves() {
 
-        return MoveFinder.getAllAvailableMoves(this.chessboard)
+        return MoveFinder.getAllAvailableMoves(this.chessboard, this.castlingInfo)
     }
 
     makeMove(move) {
-
         const piece = this.chessboard[move.from]
-
-        console.log(this.availableMoves)
 
         if(MoveFinder.getPieceColor(piece) != this.currentTurn)
             return false;
 
         if(this.availableMoves.filter(availableMove => availableMove.from == move.from && availableMove.to == move.to).length > 0) {
+
+            if(move.from == 95 && move.to == 97 && this.castlingInfo.whiteShortCastleAvailable) {
+
+                this.chessboard[96] = this.chessboard[98];
+                this.chessboard[98] = ""
+            } else if(move.from == 95 && move.to == 93 && this.castlingInfo.whiteLongCastleAvailable) {
+
+                this.chessboard[94] = this.chessboard[91];
+                this.chessboard[91] = ""
+            } else if(move.from == 25 && move.to == 27 && this.castlingInfo.blackShortCastleAvailable) {
+
+                this.chessboard[26] = this.chessboard[28];
+                this.chessboard[28] = ""
+
+            } else if(move.from == 25 && move.to == 23 && this.castlingInfo.blackLongCastleAvailable) {
+
+                this.chessboard[24] = this.chessboard[21];
+                this.chessboard[21] = ""
+            }
+
             this.chessboard[move.to] = this.chessboard[move.from];
             this.chessboard[move.from] = ""
+
+            // cant castle if rook is dead or moved already
+            if(move.from == 98 || move.to == 98) 
+                this.castlingInfo.whiteShortCastleAvailable = false;
+            if(move.from == 91 || move.to == 91) 
+                this.castlingInfo.whiteLongCastleAvailable = false;
+            if(move.from == 21 || move.to == 21) 
+                this.castlingInfo.blackShortCastleAvailable = false;
+            if(move.from == 28 || move.to == 28) 
+                this.castlingInfo.blackLongCastleAvailable = false;
+            
+            // cant castle if king moved
+            if(move.from == 95)
+            {
+                this.castlingInfo.whiteLongCastleAvailable = false;
+                this.castlingInfo.whiteShortCastleAvailable = false;
+            } else if(move.from == 25) {
+                this.castlingInfo.blackLongCastleAvailable = false;
+                this.castlingInfo.blackShortCastleAvailable = false;
+            }
+
         } else {
             return false;
         }
 
         this.swapTurn();
+        this.availableMoves = this.findAvailableMoves()
         return true;
     }
 
@@ -73,7 +119,7 @@ module.exports = class ChessGame {
         else 
             this.currentTurn = 'white'
 
-        this.availableMoves = this.findAvailableMoves()
+
     }
 }
 

@@ -71,6 +71,8 @@ export default {
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(8, 1fr);
         margin: 0 auto;
+        border-radius: 10px;
+        overflow: hidden;
     }
 
     .pieces {
